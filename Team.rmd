@@ -1,0 +1,181 @@
+---
+title: "Team.rmd"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+```
+
+```{r}
+library(readxl)
+
+defense <- read_excel('C:/Users/visma/Desktop/DS202/ds202_lab4/cyclonesFootball2020.xlsx', sheet='Defensive')
+
+offense <- read_excel('C:/Users/visma/Desktop/DS202/ds202_lab4/cyclonesFootball2020.xlsx', sheet='Offensive')
+
+biography <- read_excel('C:/Users/visma/Desktop/DS202/ds202_lab4/cyclonesFootball2020.xlsx', sheet='Biography')
+```
+
+```{r}
+defClean <- defense %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Tackles_Solo = as.numeric(Tackles_Solo),
+         Tackles_ASST = as.numeric(Tackles_ASST),
+         Tackles_TFL = as.numeric(Tackles_TFL),
+         Tackles_Sack = as.numeric(Tackles_Sack),
+         Turnover_FF = as.numeric(Turnover_FF),
+         Turnover_FR = as.numeric(Turnover_FR),
+         Turnover_INT = as.numeric(Turnover_INT),
+         Pass_QBH = as.numeric(Pass_QBH),
+         Pass_PB = as.numeric(Pass_PB))
+str(defClean)
+```
+
+```{r}
+offClean <- offense %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Rushing_ATT = as.numeric(Rushing_ATT),
+         Rushing_YDS = as.numeric(Rushing_YDS),
+         Rushing_TD = as.numeric(Rushing_TD),
+         Receiving_REC = as.numeric(Receiving_REC),
+         Receiving_YDS = as.numeric(Receiving_YDS),
+         Receiving_TD = as.numeric(Receiving_TD),
+         `Passing_CMP-ATT` = as.numeric(`Passing_CMP-ATT`),
+         Passing_YDS = as.numeric(Passing_YDS),
+         Passing_TD = as.numeric(Passing_TD),
+         Passing_INT = as.numeric(Passing_INT))
+str(offClean)
+```
+
+```{r}
+bioClean <- biography %>%
+  separate(Height, c('Feet', 'Inches'), '-', convert=TRUE) %>%
+  mutate(Name = as.factor(Name),
+         Position = as.factor(Position),
+         Feet = as.numeric(Feet),
+         Inches = as.numeric(Inches),
+         Weight = as.numeric(Weight),
+         Class = as.factor(Class),
+         Hometown = as.factor(Hometown),
+         Highschool = as.factor(Highschool))
+str(bioClean)
+```
+
+```{r}
+offClean2 <- offClean %>%
+  pivot_longer(Rushing_ATT:Passing_INT, names_to = 'stat')
+str(offClean2)
+```
+
+```{r}
+ggplot(offClean2, aes(x = stat, y = value)) + geom_bar(stat = 'identity')
+```
+
+The passing yards and rushing yards have a significantly higher value than any other category.
+
+
+```{r}
+OK <- offClean %>%
+  filter(Opponent_Opponent=='Oklahoma') %>%
+  ggplot(aes(x=Name, y=Receiving_YDS)) + geom_point() + theme(axis.text.x = element_text(angle=90))
+OK
+
+OR <- offClean %>%
+  filter(Opponent_Opponent=='Oregon') %>%
+  ggplot(aes(x=Name, y=Receiving_YDS)) + geom_point() + theme(axis.text.x = element_text(angle=90))
+OR
+```
+I think that Iowa did better against Oklahoma offensively than they did against Oregon because there are significantly more receiving yards per player in the Oklahoma game than there are in the Oregon one.
+
+
+```{r}
+bioClean2 <- bioClean %>%
+  separate(Hometown, c('City', 'State', sep = ','))
+
+States <- full_join(pivot_wider(offClean, Name), pivot_wider(defClean, Name))
+States2 <- select(bioClean2, c(Name, State))
+States <- left_join(States, States2, by = 'Name')
+summary(factor(States$State))
+```
+
+```{r}
+BrockP <- full_join(x = offClean, y = defClean)
+BrockP2 <- BrockP %>%
+  filter(Name == 'Purdy, Brock')
+Team <- BrockP %>%
+  filter(Name != 'Purdy, Brock')
+
+ggplot(BrockP, aes(x = Opponent_Opponent, y = Rushing_TD)) + geom_bar(stat = 'identity')
+
+ggplot(Team, aes(x = Opponent_Opponent, y = Rushing_TD)) + geom_bar(stat = 'identity')
+```
+
+Overall, Brock has more rushing touchdowns than the rest of the team on average
+
+
+```{r}
+def2019 <- read_excel('C:/Users/visma/Desktop/DS202/ds202_lab4/cyclonesFootball2019.xlsx', sheet='Defensive')
+
+off2019 <- read_excel('C:/Users/visma/Desktop/DS202/ds202_lab4/cyclonesFootball2019.xlsx', sheet='Offensive')
+```
+
+
+```{r}
+defClean2019 <- def2019 %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Tackles_Solo = as.numeric(Tackles_Solo),
+         Tackles_ASST = as.numeric(Tackles_ASST),
+         Tackles_TFL = as.numeric(Tackles_TFL),
+         Tackles_Sack = as.numeric(Tackles_Sack),
+         Turnover_FF = as.numeric(Turnover_FF),
+         Turnover_FR = as.numeric(Turnover_FR),
+         Turnover_INT = as.numeric(Turnover_INT),
+         Pass_QBH = as.numeric(Pass_QBH),
+         Pass_PB = as.numeric(Pass_PB))
+str(defClean2019)
+
+offClean2019 <- off2019 %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Rushing_ATT = as.numeric(Rushing_ATT),
+         Rushing_YDS = as.numeric(Rushing_YDS),
+         Rushing_TD = as.numeric(Rushing_TD),
+         Receiving_REC = as.numeric(Receiving_REC),
+         Receiving_YDS = as.numeric(Receiving_YDS),
+         Receiving_TD = as.numeric(Receiving_TD),
+         `Passing_CMP-ATT` = as.numeric(`Passing_CMP-ATT`),
+         Passing_YDS = as.numeric(Passing_YDS),
+         Passing_TD = as.numeric(Passing_TD),
+         Passing_INT = as.numeric(Passing_INT))
+str(offClean2019)
+```
+
+```{r}
+offClean20192 <- offClean2019 %>%
+  pivot_longer(Rushing_ATT:Passing_INT, names_to = 'stat')
+offClean2 <- offClean %>%
+  pivot_longer(Rushing_ATT:Passing_INT, names_to = 'stat')
+
+defClean20192 <- defClean2019 %>%
+  pivot_longer(Tackles_Solo:Pass_PB, names_to = 'stat')
+defClean2 <- defClean %>%
+  pivot_longer(Tackles_Solo:Pass_PB, names_to = 'stat')
+
+ggplot(offClean20192, aes(x = Name, y = value)) + geom_bar(stat = 'identity') + theme(axis.text.x = element_text(angle = 90))
+
+ggplot(offClean2, aes(x = Name, y = value)) + geom_bar(stat = 'identity') + theme(axis.text.x = element_text(angle = 90))
+
+ggplot(defClean20192, aes(x = Name, y = value)) + geom_bar(stat = 'identity') + theme(axis.text.x = element_text(angle = 90))
+
+ggplot(defClean2, aes(x = Name, y = value)) + geom_bar(stat = 'identity') + theme(axis.text.x = element_text(angle = 90))
+```
+
+Overall between 2019 and 2020, I have to say that the offensive team did weaker overall. I believe that this is the case because overall, many if not all players had less rushing yards and receiving yards on average. On the other hand, the defensive team did better in 2020 than in 2019, because they had more solo tackles and Pass_PB in addition to other values on average than in the previous year.
