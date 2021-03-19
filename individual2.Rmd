@@ -1,0 +1,119 @@
+---
+title: "individial2"
+author: "HyunWoo_Son"
+date: '2021 3 19 '
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(ggplot2)
+```
+
+```{r}
+defense <- read_excel('cyclonesFootball2020.xlsx', sheet='Defensive')
+```
+
+```{r}
+
+offense<- read_excel('cyclonesFootball2020.xlsx', sheet= 'Offensive')
+```
+
+```{r}
+bio<- read_excel('cyclonesFootball2020.xlsx', sheet='Biography')
+```
+
+# Part one: Cleaning data
+
+Although the three Excel sheets are loaded into R, they are not useful before some cleaning. Manipulate the three imported data frames, so that in the cleaned dataset:
+
+
+```{r}
+defClean<- defense %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Tackles_Solo = as.numeric(Tackles_Solo),
+         Tackles_ASST = as.numeric(Tackles_ASST),
+         Tackles_TFL = as.numeric(Tackles_TFL),
+         Tackles_Sack = as.numeric(Tackles_Sack),
+         Turnover_FF = as.numeric(Turnover_FF),
+         Turnover_FR = as.numeric(Turnover_FR),
+         Turnover_INT = as.numeric(Turnover_INT),
+         Pass_QBH = as.numeric(Pass_QBH),
+         Pass_PB = as.numeric(Pass_PB))
+
+str(defClean)
+```
+```{r}
+offClean<- offense %>%
+  mutate(Name = as.factor(Name),
+         Opponent_Opponent = as.factor(Opponent_Opponent),
+         Receiving_REC = as.numeric(Receiving_REC),
+         Receiving_YDS = as.numeric(Receiving_YDS),
+         Receiving_TD = as.numeric(Receiving_TD),
+         Rushing_ATT = as.numeric(Rushing_ATT),
+         Rushing_YDS = as.numeric(Rushing_YDS),
+         Rushing_TD = as.numeric(Rushing_TD),
+         `Passing_CMP-ATT` = as.numeric(`Passing_CMP-ATT`),
+         Passing_YDS = as.numeric(Passing_YDS),
+         Passing_TD = as.numeric(Passing_TD),
+         Passing_INT = as.numeric(Passing_INT))
+
+str(offClean)
+
+```
+```{r}
+bioClean<- bio %>%
+  separate(Height, c('Feet', 'Inches'), '-', convert=TRUE) %>%
+  mutate(Name = as.factor(Name),
+         Position = as.factor(Position),
+         Feet = as.numeric(Feet),
+         Inches = as.numeric(Inches),
+         Weight = as.numeric(Weight),
+         Class = as.factor(Class),
+         Hometown = as.factor(Hometown),
+         Highschool = as.factor(Highschool))
+str(bioClean)
+```
+
+#Part two: Tidying
+
+For the following questions, work on the cleaned data frames defClean, offClean, and bioClean.
+
+# 1
+
+Reformat the offClean data frame into a tidy format using pivot_longer. The type of statistic (Receiving_REC for the number of receivings, Receiving_YDS for receiving yards, etc) is added as a new key column named stat.
+
+```{r}
+offClean2 <- offClean %>%
+  pivot_longer(Rushing_ATT:Passing_INT, names_to = 'stat')
+str(offClean2)
+
+```
+
+
+#  2 
+Show on the distributions of the offensive statistics. The distribution of each offensive statsitic should be shown in a separate facet. Explain the patterns you see.
+
+
+```{r}
+ggplot(offClean2, aes(x=stat, y=value)) + geom_bar(stat='identity')
+```
+The pattern I see for the offensive statistics is that the ISU football team tries to pass more than rushing through it. Although the yards for passing are huge in numbers, the amount of passing TD is lower than rushing touchdowns. 
+
+However, I can not assure 100%, just looking at the offensive statistics; it seems like either quarterback or the wide receiver has some problems for passing. 
+
+On the other hand, rushing yards were also huge, and there more touchdowns made with rushing, which means that ISU has strong running backs than wide receivers or quarterbacks. 
+
+
+# 3
+Did ISU have better offense against Oregon or Oklahoma? Answer this question by creating a scatterplot with the x- and y-axes being the receiving yards of the ISU players against these two opponents. A large number of receiving yards indicates good offense.
+
+```{r}
+ggplot()
+```
+
