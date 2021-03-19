@@ -94,7 +94,7 @@ offClean2 <- offClean %>%
 str(offClean2)
 
 ```
-
+##This is a nice way of doing it! Similar to what I did
 
 #  2 
 Show on the distributions of the offensive statistics. The distribution of each offensive statsitic should be shown in a separate facet. Explain the patterns you see.
@@ -110,8 +110,12 @@ However, I can not assure 100%, just looking at the offensive statistics; it see
 On the other hand, rushing yards were also huge, and there more touchdowns made with rushing, which means that ISU has strong running backs than wide receivers or quarterbacks. 
 
 
+##Very detailed explanation here! 
+
 # 3
 Did ISU have better offense against Oregon or Oklahoma? Answer this question by creating a scatterplot with the x- and y-axes being the receiving yards of the ISU players against these two opponents. A large number of receiving yards indicates good offense.
+
+##I have to agree with this statement, I found similar results when I did this
 
 ```{r}
 ggplot()
