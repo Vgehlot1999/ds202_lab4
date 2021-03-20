@@ -179,3 +179,5 @@ ggplot(defClean2, aes(x = Name, y = value)) + geom_bar(stat = 'identity') + them
 ```
 
 Overall between 2019 and 2020, I have to say that the offensive team did weaker overall. I believe that this is the case because overall, many if not all players had less rushing yards and receiving yards on average. On the other hand, the defensive team did better in 2020 than in 2019, because they had more solo tackles and Pass_PB in addition to other values on average than in the previous year.
+
+#HyunWoo's comment: I think he made sharp points looking through the vital stats for offense. Especially looking through the rushing yards and receiving yards, I totally agree that the offense was not as good as the year 2019. I remember that as a football fan of our school, the result was not as good as the year before. Though the statistics of the defense were better than year 2019, it was not as catchy because people usually focus on the offense.  
